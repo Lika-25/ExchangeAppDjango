@@ -1,0 +1,31 @@
+{% extends 'exchange_appp/base.html' %}
+
+{% block title %}
+    {{ title2 }}
+{% endblock %}
+
+{% block content %}
+    <div class="mt-3">
+        <h1>Реєстрація</h1>
+        <form method="post" action="{% url 'Registration' %}">
+            {% csrf_token %}
+            
+            <div class="mb-3">
+                <label for="id_username" class="form-label">Логін:</label>
+                {{ form.username }}
+            </div>
+
+            <div class="mb-3">
+                <label for="id_password1" class="form-label">Пароль:</label>
+                {{ form.password1 }}
+            </div>
+
+            <div class="mb-3">
+                <label for="id_password2" class="form-label">Повторіть пароль:</label>
+                {{ form.password2 }}
+            </div>
+
+            <button type="submit" class="btn btn-success">Зареєструватися</button>
+        </form>
+    </div>
+{% endblock %}

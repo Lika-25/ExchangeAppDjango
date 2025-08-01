@@ -1,0 +1,44 @@
+# Python cache and compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.env
+.venv/
+venv/
+
+# Logs
+*.log
+
+# Django static and media files
+staticfiles/
+media/
+
+# IDE/editor folders and files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# macOS system files
+.DS_Store
+
+# Coverage reports
+htmlcov/
+.coverage
+
+# MyPy cache
+.mypy_cache/
+
+# Pytest cache
+.pytest_cache/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Celery beat schedule file
+celerybeat-schedule
+
+# Uncomment to ignore Django migrations (optional)
+# migrations/

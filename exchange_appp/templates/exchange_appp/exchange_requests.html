@@ -1,0 +1,75 @@
+{% extends 'exchange_appp/base.html' %}
+
+{% block title %}
+    Запити на обмін 
+{% endblock %}
+
+{% block content %}
+    <div class="mt-3"> 
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        <h1>Запити на обмін</h1>
+
+        <h2>Відправлені запити</h2>
+        {% if sent_requests %}
+            <ul>
+                {% for request in sent_requests %}
+                    <li>
+                        {% if request.is_accepted %}
+                            <!-- Якщо запит вже підтверджено, вивести повідомлення про це -->
+                            Ваш запит на обмін річчю "{{ request.item_offered.title }}" за річ "{{ request.item_requested.title }}" підтверджено.
+                        {% else %}
+                            <!-- Якщо запит ще не підтверджено, вивести повідомлення про відправку запиту -->
+                            Ви відправили запит на обмін річчю "{{ request.item_offered.title }}" за річ "{{ request.item_requested.title }}".
+                        {% endif %}
+                        <form method="post" action="{% url 'ExchangeRequests' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="cancelRequest" value="{{ request.id }}">
+                            <button type="submit">Відмінити запит</button>
+                        </form>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <!-- Якщо відправлені запити відсутні, вивести відповідне повідомлення -->
+            <p>Ви не відправили жодного запиту на обмін.</p>
+        {% endif %}
+
+        <h2>Отримані запити</h2>
+        {% if received_requests %}
+            <ul>
+                {% for request in received_requests %}
+                    <li>
+                        {% if request.is_accepted %}
+                            <!-- Якщо запит вже підтверджено, вивести повідомлення про це -->
+                            {{ request.sender.username }} відправив запит на обмін річчю "{{ request.item_requested.title }}" за вашу річ "{{ request.item_offered.title }}" та підтвердив ваш запит.
+                        {% else %}
+                            <!-- Якщо запит ще не підтверджено, вивести повідомлення про отримання запиту -->
+                            {{ request.sender.username }} відправив запит на обмін річчю "{{ request.item_requested.title }}" за вашу річ "{{ request.item_offered.title }}".
+                            <!-- Додати кнопку для підтвердження запиту -->
+                            <form method="post" action="{% url 'ExchangeRequests' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="confirmRequest" value="{{ request.id }}">
+                                <button type="submit">Підтвердити запит</button>
+                            </form>
+                        {% endif %}
+                        <!-- Додати кнопку для відміни отриманого запиту -->
+                        <form method="post" action="{% url 'ExchangeRequests' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="cancelRequest" value="{{ request.id }}">
+                            <button type="submit">Відмінити запит</button>
+                        </form>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <!-- Якщо отримані запити відсутні, вивести відповідне повідомлення -->
+            <p>Ви не отримали жодного запиту на обмін.</p>
+        {% endif %}
+    </div>
+{% endblock %}

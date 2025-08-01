@@ -1,0 +1,64 @@
+{% extends 'exchange_appp/base.html' %}
+
+{% block title %}
+    {{ title1 }}  // Виводить назву сторінки
+{% endblock %}
+
+{% block content %}
+    <div class="mt-3"> 
+        <h1>Мої речі</h1>
+        {% for el in items %}
+            {% if el.user == request.user %}
+                <div class="card mt-3">
+                    <div class="row g-0">
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title"><a href="{% url 'ItemDetali' pk=el.pk %}">{{ el.title }}</a></h5>  <!--Виводить назву предмету з посиланням на його деталі-->
+                                <p class="card-text">Категорія: {{ el.get_category_display }}</p>  <!--Виводить категорію предмету-->
+                                <p class="card-text">Категорія для обміну: {{ el.get_exchange_category_display }}</p>  <!-- Виводить категорію для обміну предмету-->
+                                <p class="card-text">Автор: {{ el.user.username }}</p>  <!-- Виводить ім'я автора предмету-->
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <img src="{{ el.get_image_url }}" style="max-width: 30%; height: auto;" alt="{{ el.title }}">  <!-- Виводить зображення предмету, якщо воно є-->
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    <!-- JavaScript-скрипт для відправлення запиту на обмін -->
+    <script>
+        document.querySelectorAll('.exchangeButton').forEach(function(button) {
+            button.addEventListener('click', function() {
+                var csrfToken = button.getAttribute('data-csrf_token');  // Отримуємо CSRF-токен
+                var itemId = button.getAttribute('data-item_id');  // Отримуємо ідентифікатор предмету
+                var requesterItemId = document.getElementById(button.getAttribute('data-requester_item_id')).value;  // Отримуємо ідентифікатор предмету відправника запиту
+
+                
+                fetch('/exchange/request/', {// Відправляємо запит на сервер
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken,  // Додаємо CSRF-токен у заголовок
+                    },
+                    body: JSON.stringify({
+                        'item_id': itemId,
+                        'requester_item_id': requesterItemId,
+                    }),
+                })
+                .then(response => response.json())  // Обробляємо відповідь сервера у форматі JSON
+                .then(data => {
+                    // Обробка результатів
+                    console.log(data);
+                    // Перенаправлення на сторінку з запитом на обмін
+                    window.location.href = `/exchange/requests/${data.request_id}/`;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            });
+        });
+    </script>
+{% endblock %}

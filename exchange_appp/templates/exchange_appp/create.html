@@ -1,0 +1,17 @@
+{% extends 'exchange_appp/base.html' %}
+
+{% block title %}
+{{ title4 }}
+{% endblock %}
+
+{% block content %}
+<div class="mt-3">
+    <h1>Додати річ</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-success"> Додати </button>
+        <span> {{ error }}</span>
+    </form>
+</div>
+{% endblock %}
